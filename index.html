@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra Trắc Nghiệm Tổng Hợp - Kinh Tế Vi Mô</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        input[type="radio"] { accent-color: #4f46e5; width: 1.25rem; height: 1.25rem; cursor: pointer; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container -->
+    <div id="app-container" class="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden transition-all duration-300 flex flex-col" style="max-height: 90vh;">
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="p-8 text-center space-y-6 my-auto">
+            <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <svg class="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800">Ôn tập Tổng hợp 5 Chương</h1>
+            <p class="text-gray-500 max-w-2xl mx-auto">Bài thi gồm 50 câu hỏi trắc nghiệm được rút ra từ 5 chương (mỗi chương 10 câu). Giúp bạn tổng ôn toàn bộ kiến thức Kinh tế Vi mô. Hãy kiểm tra kiến thức của bạn ngay bây giờ!</p>
+            <div class="pt-4">
+                <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105">
+                    Bắt đầu làm bài (50 Câu)
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden flex-col h-full overflow-hidden">
+            <!-- Header -->
+            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center shrink-0">
+                <h2 class="font-semibold text-lg hidden sm:block">Kiểm tra Kinh tế Vi mô</h2>
+                <span class="bg-indigo-800 px-4 py-1.5 rounded-full text-sm font-medium" id="question-counter">Câu 1/50</span>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 h-1.5 shrink-0">
+                <div id="progress-bar" class="bg-yellow-400 h-1.5 transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <!-- Content Area (Scrollable) -->
+            <div class="p-6 md:p-8 flex-grow overflow-y-auto" id="question-scroll-area">
+                <h3 id="question-text" class="text-xl font-medium text-gray-800 mb-6 leading-relaxed">
+                    <!-- Text -->
+                </h3>
+                
+                <div id="options-container" class="space-y-3">
+                    <!-- Options -->
+                </div>
+            </div>
+
+            <!-- Footer (Navigation) -->
+            <div class="p-4 border-t border-gray-100 flex justify-between bg-gray-50 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <button onclick="prevQuestion()" id="btn-prev" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    Quay lại
+                </button>
+                <button onclick="nextQuestion()" id="btn-next" class="px-8 py-2.5 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
+                    Tiếp theo
+                </button>
+                <button onclick="submitQuiz()" id="btn-submit" class="hidden px-8 py-2.5 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-colors shadow-sm">
+                    Nộp bài
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden flex-col h-full overflow-hidden">
+            <!-- Fixed Header Result -->
+            <div class="p-6 md:p-8 shrink-0 text-center bg-white border-b border-gray-200 shadow-sm z-10">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Kết quả bài thi</h2>
+                <div class="text-5xl font-extrabold text-indigo-600 my-4" id="score-display">0/50</div>
+                <p class="text-gray-500 font-medium text-lg" id="score-message">Đang tính điểm...</p>
+                <div class="mt-6 flex justify-center gap-4">
+                    <button onclick="location.reload()" class="px-6 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition">Làm lại bài</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Reviews -->
+            <div class="flex-grow overflow-y-auto p-6 md:p-8 bg-gray-50">
+                <h3 class="text-xl font-semibold mb-6 text-gray-800 border-l-4 border-indigo-500 pl-3">Chi tiết đáp án & Giải thích</h3>
+                <div id="review-container" class="space-y-6">
+                    <!-- Reviews -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script logic -->
+    <script>
+        // Dữ liệu 50 câu hỏi từ 5 Chương (Mỗi chương 10 câu đầu tiên để tiết kiệm dung lượng)
+        const rawData = [
+            // CHƯƠNG 1
+            { id: "C1-TN01", q: "Vấn đề trung tâm làm phát sinh sự lựa chọn kinh tế là gì?", o: { A: "Nguồn lực vô hạn", B: "Nguồn lực khan hiếm so với nhu cầu", C: "Mọi hàng hóa đều miễn phí", D: "Chỉ chính phủ cần lựa chọn" }, a: "B", e: "Khan hiếm là nguồn lực có hạn so với nhu cầu vô hạn; chính điều đó buộc xã hội phải lựa chọn." },
+            { id: "C1-TN02", q: "Chi phí cơ hội của một lựa chọn được xác định bằng gì?", o: { A: "Tổng giá trị mọi phương án bỏ qua", B: "Chi phí tiền mặt duy nhất", C: "Giá trị phương án tốt nhất bị từ bỏ", D: "Khoản chỉ không thể thu hồi duy nhất" }, a: "C", e: "Chi phí cơ hội = giá trị của phương án tốt nhất bị từ bỏ (không phải tổng mọi phương án, cũng không chỉ là chi phí bằng tiền)." },
+            { id: "C1-TN03", q: "Điểm nằm bên trong đường PPF phản ánh điều gì trong mô hình chuẩn?", o: { A: "Nguồn lực chưa được sử dụng hiệu quả", B: "Không thể đạt được", C: "Luôn tối ưu cho xã hội", D: "Công nghệ vượt mức hiện có" }, a: "A", e: "Điểm bên trong PPF là khả thi nhưng nguồn lực chưa được dùng hết hoặc dùng chưa hiệu quả (thất nghiệp, lãng phí). Chỉ điểm bên ngoài PPF mới không thể đạt được." },
+            { id: "C1-TN04", q: "PPF dịch ra ngoài có thể do yếu tố nào?", o: { A: "Tỷ lệ thất nghiệp tăng với nguồn lực không đổi", B: "Giảm hiệu quả phân bổ", C: "Tăng giá một hàng hóa đơn thuần", D: "Công nghệ sản xuất được cải thiện" }, a: "D", e: "PPF dịch ra ngoài khi năng lực sản xuất tăng: công nghệ tốt hơn hoặc nguồn lực nhiều hơn." },
+            { id: "C1-TN05", q: "Phát biểu nào thuộc kinh tế học chuẩn tắc?", o: { A: "Giá tăng có thể làm lượng cầu giảm", B: "Nhà nước nên tăng hỗ trợ học phí", C: "Chi phí đầu vào tăng làm cung giảm", D: "Doanh thu bằng giá nhân lượng" }, a: "B", e: "Câu có từ 'nên' chứa phán xét giá trị nên là kinh tế học chuẩn tắc." },
+            { id: "C1-TN06", q: "Nghiên cứu nào chủ yếu thuộc kinh tế vi mô?", o: { A: "Lựa chọn sản lượng của một doanh nghiệp", B: "Lạm phát toàn quốc", C: "Tăng trưởng GDP quốc gia", D: "Tỷ lệ thất nghiệp toàn nền kinh tế" }, a: "A", e: "Lựa chọn sản lượng của một doanh nghiệp là hành vi của đơn vị kinh tế riêng lẻ nên thuộc vi mô." },
+            { id: "C1-TN07", q: "Nếu MB > MC tại mức hoạt động hiện tại và còn khả năng điều chỉnh, nên làm gì?", o: { A: "Giảm hoạt động", B: "Dừng mọi hoạt động", C: "Tăng hoạt động khi bất đẳng thức còn đúng", D: "Bỏ qua chi phí cận biên" }, a: "C", e: "MB > MC nghĩa là thêm một đơn vị hoạt động mang lại lợi ích nhiều hơn chi phí, nên tiếp tục tăng hoạt động chừng nào bất đẳng thức còn đúng." },
+            { id: "C1-TN08", q: "Một người bỏ việc hè thu nhập 6.000 USD để học, nộp học phí 2.000 và mua sách 200 USD. Sinh hoạt phí 1.400 USD như nhau ở cả hai phương án. Chi phí cơ hội của đi học là bao nhiêu?", o: { A: "3.600 USD", B: "7.400 USD", C: "9.600 USD", D: "8.200 USD" }, a: "D", e: "Chi phí cơ hội của đi học = thu nhập hè bị bỏ lỡ 6.000 + học phí 2.000 + sách 200 = 8.200 USD. Sinh hoạt phí không tính vì như nhau ở cả 2 phương án." },
+            { id: "C1-TN09", q: "Lợi thế so sánh được xác định bởi yếu tố nào?", o: { A: "Sản lượng tuyệt đối lớn hơn", B: "Chi phí cơ hội thấp hơn", C: "Quốc gia có dân số lớn hơn", D: "Giá bán luôn cao hơn" }, a: "B", e: "Lợi thế so sánh được xác định bởi chi phí cơ hội thấp hơn, không phải sản lượng tuyệt đối, dân số hay giá bán." },
+            { id: "C1-TN10", q: "Giá trị tăng từ 80 lên 100 thì tốc độ tăng bằng bao nhiêu?", o: { A: "25%", B: "20%", C: "80%", D: "125%" }, a: "A", e: "Tốc độ tăng = (100 − 80)/80 = 0,25 = 25%." },
+            
+            // CHƯƠNG 2
+            { id: "C2-TN01", q: "Phát biểu nào mô tả đúng nhất lượng cầu đối với một hàng hóa?", o: { A: "Toàn bộ quan hệ giữa giá và số lượng người mua sẵn sàng mua", B: "Số lượng người mua sẵn sàng và có khả năng mua tại một mức giá xác định", C: "Số lượng hàng hóa hiện có trên thị trường", D: "Số lượng người mua muốn có, bất kể khả năng thanh toán" }, a: "B", e: "Lượng cầu là số lượng người mua sẵn sàng và có khả năng mua tại một mức giá xác định." },
+            { id: "C2-TN02", q: "Khi giá của chính hàng hóa X giảm, các yếu tố khác không đổi, điều gì xảy ra?", o: { A: "Đường cầu X dịch sang phải", B: "Đường cầu X dịch sang trái", C: "Di chuyển dọc đường cầu X, lượng cầu tăng", D: "Di chuyển dọc đường cung X, lượng cung tăng" }, a: "C", e: "Giá của chính hàng hóa giảm chỉ gây di chuyển dọc đường cầu: lượng cầu tăng. Đường cầu không dịch chuyển." },
+            { id: "C2-TN03", q: "Nếu X và Y là hai hàng hóa thay thế, giá của Y tăng sẽ làm:", o: { A: "Cầu đối với X tăng", B: "Cầu đối với X giảm", C: "Lượng cầu X giảm do giá X tăng", D: "Cung đối với X tăng" }, a: "A", e: "X và Y thay thế nhau: giá Y tăng thì người tiêu dùng chuyển sang X, nên cầu X tăng (đường cầu X dịch phải)." },
+            { id: "C2-TN04", q: "Nếu máy in và mực in là hàng hóa bổ sung, giá máy in tăng có thể làm:", o: { A: "Cầu mực in tăng", B: "Cầu mực in giảm", C: "Cung mực in tăng", D: "Chỉ gây di chuyển dọc đường cầu mực in" }, a: "B", e: "Máy in và mực in bổ sung nhau: giá máy in tăng thì lượng máy in được mua giảm, nhu cầu mực in đi kèm giảm, nên cầu mực in giảm." },
+            { id: "C2-TN05", q: "Thu nhập tăng làm cầu đối với X giảm. X được gọi là:", o: { A: "Hàng hóa thông thường", B: "Hàng hóa thứ cấp", C: "Hàng hóa thay thế", D: "Hàng hóa bổ sung" }, a: "B", e: "Thu nhập tăng mà cầu giảm là đặc điểm của hàng hóa thứ cấp (hàng cấp thấp)." },
+            { id: "C2-TN06", q: "Cầu thị trường tại một mức giá được xác định bằng cách:", o: { A: "Cộng mức giá từng người sẵn sàng trả", B: "Cộng lượng cầu cá nhân tại mức giá đó", C: "Lấy lượng cầu lớn nhất của một cá nhân", D: "Lấy lượng cầu bình quân rồi chia cho số người mua" }, a: "B", e: "Cầu thị trường tại một mức giá bằng tổng lượng cầu của các cá nhân tại mức giá đó (cộng theo chiều ngang)." },
+            { id: "C2-TN07", q: "Yếu tố nào thường làm đường cung dịch sang phải?", o: { A: "Giá của chính hàng hóa tăng", B: "Giá nguyên liệu tăng", C: "Công nghệ cải thiện, giúp giảm chi phí", D: "Số doanh nghiệp giảm" }, a: "C", e: "Công nghệ cải thiện làm giảm chi phí nên cung tăng (dịch phải). Giá chính hàng hóa tăng chỉ gây di chuyển dọc; giá nguyên liệu tăng hoặc số doanh nghiệp giảm làm cung giảm." },
+            { id: "C2-TN08", q: "Giá của chính hàng hóa tăng, các yếu tố khác không đổi, sẽ dẫn đến:", o: { A: "Cung tăng, đường cung dịch phải", B: "Lượng cung tăng, di chuyển dọc đường cung", C: "Cung giảm, đường cung dịch trái", D: "Lượng cung giảm, di chuyển dọc đường cung" }, a: "B", e: "Giá chính hàng hóa tăng làm lượng cung tăng: di chuyển dọc đường cung (luật cung), không dịch chuyển đường cung." },
+            { id: "C2-TN09", q: "Chi phí đầu vào tăng, các yếu tố khác không đổi, thường làm:", o: { A: "Đường cung dịch trái", B: "Đường cung dịch phải", C: "Đường cầu dịch trái", D: "Lượng cung tăng trên cùng đường cung" }, a: "A", e: "Chi phí đầu vào tăng làm lợi nhuận trên mỗi đơn vị giảm nên cung giảm: đường cung dịch trái." },
+            { id: "C2-TN10", q: "Thị trường đạt cân bằng khi:", o: { A: "Giá bằng không", B: "Lượng cầu bằng lượng cung", C: "Mọi người tiêu dùng đều mua được hàng", D: "Người bán không còn hàng tồn kho" }, a: "B", e: "Thị trường cân bằng khi lượng cầu bằng lượng cung (không có sức ép thay đổi giá)." },
+
+            // CHƯƠNG 3
+            { id: "C3-TN01", q: "Lợi ích cận biên MU được tính như thế nào?", o: { A: "TU/Q trong mọi trường hợp", B: "P/Q", C: "Mức thay đổi TU trên mức tăng tiêu dùng", D: "Thu nhập trừ chi tiêu" }, a: "C", e: "MU = ΔTU/ΔQ (dTU/dQ): mức thay đổi tổng lợi ích khi tiêu dùng thêm một đơn vị. TU/Q là lợi ích trung bình, không phải lợi ích cận biên." },
+            { id: "C3-TN02", q: "Khi MU dương nhưng giảm dần, TU biến động ra sao?", o: { A: "Giảm liên tục", B: "Tăng với tốc độ chậm dần", C: "Không đổi", D: "Luôn âm" }, a: "B", e: "MU > 0 nên TU vẫn tăng; MU giảm dần nên TU tăng với tốc độ chậm dần." },
+            { id: "C3-TN03", q: "Giá X bằng 4, giá Y bằng 2 và thu nhập bằng 200. Đường ngân sách là gì?", o: { A: "4X+2Y=200", B: "2X+4Y=200", C: "X+Y=200", D: "4X-2Y=200" }, a: "A", e: "Chi tiêu cho X cộng chi tiêu cho Y bằng thu nhập: 4X + 2Y = 200." },
+            { id: "C3-TN04", q: "Với X nằm ngang, Y nằm dọc, độ dốc đường ngân sách bằng bao nhiêu?", o: { A: "Y/Px", B: "Py/Px", C: "Px/Py", D: "-Px/Py" }, a: "D", e: "Y = I/Py − (Px/Py)·X nên độ dốc đường ngân sách là −Px/Py." },
+            { id: "C3-TN05", q: "Thu nhập tăng trong khi giá hai hàng không đổi làm đường ngân sách như thế nào?", o: { A: "Quay quanh giao trục Y", B: "Dịch vào trong", C: "Dịch ra ngoài song song", D: "Không thay đổi" }, a: "C", e: "Thu nhập tăng, giá không đổi: hai giao điểm I/Px và I/Py cùng tăng, độ dốc không đổi ⇒ đường ngân sách dịch ra ngoài song song." },
+            { id: "C3-TN06", q: "Nếu chỉ giá X giảm, đường ngân sách thay đổi ra sao?", o: { A: "Giao trục X tăng, giao trục Y giữ nguyên", B: "Cả hai giao trục giảm", C: "Dịch song song vào trong", D: "Giao trục Y tăng, giao trục X giữ nguyên" }, a: "A", e: "Px giảm: giao điểm trục X (I/Px) tăng, giao điểm trục Y (I/Py) giữ nguyên ⇒ đường ngân sách quay ra ngoài quanh giao điểm trục Y." },
+            { id: "C3-TN07", q: "Với sở thích thông thường và nghiệm nội tại, điều kiện tối ưu nào đúng?", o: { A: "MUx=MUy với mọi giá", B: "MUx/Px=MUy/Py và chỉ hết ngân sách", C: "X=Y với mọi thu nhập", D: "Px=Py trong mọi trường hợp" }, a: "B", e: "Với sở thích thông thường và nghiệm nội tại, tối ưu khi MUx/Px = MUy/Py và chi hết ngân sách." },
+            { id: "C3-TN08", q: "MRSxy=2 mang ý nghĩa nào?", o: { A: "Cần tăng đồng thời 2X và 1Y", B: "Giá X bằng 2 trong mọi thị trường", C: "Thu nhập tăng gấp đôi", D: "Sẵn sàng bỏ khoảng 2Y để thêm 1X, giữ U không đổi" }, a: "D", e: "MRSxy = 2 nghĩa là người tiêu dùng sẵn sàng bỏ khoảng 2Y để có thêm 1X mà mức thỏa dụng U không đổi." },
+            { id: "C3-TN09", q: "Với U=XY, MUx và MUy lần lượt là gì?", o: { A: "X và Y", B: "XY và XY", C: "Y và X", D: "1 và 1" }, a: "C", e: "U = XY ⇒ MUx = ∂U/∂X = Y; MUy = ∂U/∂Y = X." },
+            { id: "C3-TN10", q: "U=XY, I=200, Px=4, Py=2. Giỏ tối ưu là gì?", o: { A: "X=25, Y=50", B: "X=50, Y=0", C: "X=20, Y=60", D: "X=40, Y=20" }, a: "A", e: "MUx/Px = MUy/Py ⇒ Y/4 = X/2 ⇒ Y = 2X. Ngân sách: 4X + 2·2X = 200 ⇒ 8X = 200 ⇒ X = 25, Y = 50." },
+
+            // CHƯƠNG 4
+            { id: "C4-TN01", q: "Hàm sản xuất thể hiện quan hệ nào?", o: { A: "Giá và cầu", B: "Đầu vào và đầu ra tại công nghệ cho trước", C: "Lợi nhuận và thuế", D: "Doanh thu và lãi suất" }, a: "B", e: "Hàm sản xuất biểu diễn quan hệ giữa đầu vào và sản lượng tối đa đạt được với công nghệ cho trước." },
+            { id: "C4-TN02", q: "Ngắn hạn được xác định bởi điều kiện nào?", o: { A: "Có ít nhất một đầu vào cố định", B: "Luôn dưới một năm", C: "Mọi đầu vào đều thay đổi", D: "Mọi chi phí bằng không" }, a: "A", e: "Ngắn hạn được xác định bởi việc có ít nhất một đầu vào cố định, không nhất thiết là một khoảng thời gian cụ thể." },
+            { id: "C4-TN03", q: "Q=100, L=5. APL bằng bao nhiêu?", o: { A: "500", B: "105", C: "95", D: "20" }, a: "D", e: "APL = Q/L = 100/5 = 20." },
+            { id: "C4-TN04", q: "L tăng từ 4 lên 5, Q tăng từ 80 lên 95. MPL của lao động thứ năm là bao nhiêu?", o: { A: "19", B: "20", C: "15", D: "95" }, a: "C", e: "MPL = ΔQ/ΔL = (95 − 80)/(5 − 4) = 15." },
+            { id: "C4-TN05", q: "MPL > APL thì APL có xu hướng như thế nào khi tăng L?", o: { A: "Giảm", B: "Tăng", C: "Không đổi", D: "Luôn bằng 0" }, a: "B", e: "Khi MP > AP, đơn vị thêm vào cao hơn mức bình quân nên kéo AP tăng." },
+            { id: "C4-TN06", q: "Q=AK^0,4 L^0,6 có hiệu suất theo quy mô như thế nào?", o: { A: "Không đổi", B: "Tăng", C: "Giảm", D: "Không thể xác định vì thiếu A" }, a: "A", e: "Tổng số mũ 0,4 + 0,6 = 1 ⇒ hiệu suất theo quy mô không đổi (A không ảnh hưởng đến tổng số mũ)." },
+            { id: "C4-TN07", q: "Q=AK^0,3 L^0,4 có hiệu suất theo quy mô như thế nào?", o: { A: "Không đổi", B: "Tăng", C: "Không liên hệ số mũ", D: "Giảm" }, a: "D", e: "Tổng số mũ 0,3 + 0,4 = 0,7 < 1 ⇒ hiệu suất theo quy mô giảm." },
+            { id: "C4-TN08", q: "Lao động là đầu vào biến đổi duy nhất, w không đổi. Khi MPL dương nhưng giảm, MC thế nào?", o: { A: "Giảm", B: "Không đổi", C: "Tăng", D: "Bằng FC" }, a: "C", e: "MC = w/MPL. Khi MPL dương nhưng giảm thì MC tăng." },
+            { id: "C4-TN09", q: "Tổng chi phí kinh tế gồm những gì?", o: { A: "Chỉ chi phí hiện", B: "Chi phí hiện và chi phí ẩn", C: "Chỉ chi phí chìm", D: "Chỉ khoản vay ngân hàng" }, a: "B", e: "Tổng chi phí kinh tế = chi phí hiện (chi bằng tiền) + chi phí ẩn (chi phí cơ hội của đầu vào tự có)." },
+            { id: "C4-TN10", q: "TR=1.000, chi phí hiện 700, chi phí ẩn 200. Lợi nhuận kinh tế bằng bao nhiêu?", o: { A: "300", B: "800", C: "500", D: "100" }, a: "D", e: "Lợi nhuận kinh tế = TR − chi phí hiện − chi phí ẩn = 1.000 − 700 − 200 = 100." },
+
+            // CHƯƠNG 5
+            { id: "C5-TN01", q: "Điều kiện nào phù hợp với thị trường cạnh tranh hoàn hảo?", o: { A: "Một người bán kiểm soát toàn bộ thị trường", B: "Nhiều người bán, sản phẩm đồng nhất, tự do gia nhập", C: "Một số hãng lớn bán sản phẩm khác biệt", D: "Doanh nghiệp mới gặp rào cản gia nhập cao" }, a: "B", e: "Cạnh tranh hoàn hảo: nhiều người bán và người mua, sản phẩm đồng nhất, tự do gia nhập và rút lui." },
+            { id: "C5-TN02", q: "Vì sao một doanh nghiệp cạnh tranh hoàn hảo phải chấp nhận giá thị trường?", o: { A: "Doanh nghiệp luôn sản xuất với chi phí thấp nhất", B: "Nhà nước ấn định giá cho từng doanh nghiệp", C: "Người mua chỉ được mua từ một doanh nghiệp", D: "Sản lượng của mỗi doanh nghiệp rất nhỏ so với thị trường" }, a: "D", e: "Sản lượng của mỗi doanh nghiệp rất nhỏ so với thị trường nên không ảnh hưởng đến giá; doanh nghiệp là người chấp nhận giá." },
+            { id: "C5-TN03", q: "Ở mức giá thị trường cho trước, đường cầu mà một doanh nghiệp cạnh tranh hoàn hảo đối diện có dạng nào?", o: { A: "Nằm ngang tại mức giá thị trường", B: "Dốc xuống như đường cầu thị trường", C: "Thẳng đứng tại sản lượng tối ưu", D: "Dốc lên theo chi phí biên" }, a: "A", e: "Đường cầu mà hãng đối diện nằm ngang tại mức giá thị trường (co giãn hoàn toàn)." },
+            { id: "C5-TN04", q: "Với doanh nghiệp cạnh tranh hoàn hảo, quan hệ nào đúng giữa giá (P), doanh thu trung bình (AR) và doanh thu biên (MR)?", o: { A: "P>AR>MR", B: "P=AR>MR", C: "P=AR=MR", D: "MR>AR=P" }, a: "C", e: "Mỗi đơn vị bán thêm đều thu đúng giá thị trường P nên P = AR = MR." },
+            { id: "C5-TN05", q: "Một doanh nghiệp bán 80 sản phẩm với giá 25 nghìn đồng/sản phẩm. Tổng doanh thu bằng bao nhiêu?", o: { A: "320 nghìn đồng", B: "2.000 nghìn đồng", C: "105 nghìn đồng", D: "55 nghìn đồng" }, a: "B", e: "TR = P × Q = 25 × 80 = 2.000 nghìn đồng." },
+            { id: "C5-TN06", q: "Doanh nghiệp đang sản xuất trong ngắn hạn. Điều kiện nào xác định sản lượng tối đa hóa lợi nhuận, khi giá cao hơn AVC tối thiểu?", o: { A: "P=ATC tại mọi mức sản lượng", B: "P=AVC tại mọi mức sản lượng", C: "P=MC trên phần MC dốc xuống", D: "P=MC trên phần MC dốc lên" }, a: "D", e: "Tối đa hóa lợi nhuận: P = MC trên phần MC dốc lên (điều kiện bậc hai), với P cao hơn AVC tối thiểu." },
+            { id: "C5-TN07", q: "Tại sản lượng hiện tại, P=MR=30 và MC=24 nghìn đồng. Nếu doanh nghiệp nên tiếp tục sản xuất, điều chỉnh nào làm tăng lợi nhuận?", o: { A: "Tăng sản lượng khi MR còn lớn hơn MC", B: "Giảm sản lượng ngay về 0", C: "Giữ nguyên vì P đã bằng MR", D: "Tăng giá bán lên 36 nghìn đồng" }, a: "A", e: "MR = 30 > MC = 24 ⇒ đơn vị sản phẩm thêm làm lợi nhuận tăng ⇒ tăng sản lượng cho tới khi MC = MR. Hãng không thể tự tăng giá." },
+            { id: "C5-TN08", q: "Tại sản lượng hiện tại, P=MR=20 và MC=28 nghìn đồng. Doanh nghiệp vẫn đủ điều kiện sản xuất. Doanh nghiệp nên làm gì?", o: { A: "Tăng sản lượng vì MC cao hơn giá", B: "Giữ nguyên vì giá thị trường cố định", C: "Giảm sản lượng về mức tối ưu", D: "Tự tăng giá bán lên 28 nghìn đồng" }, a: "C", e: "MC = 28 > MR = 20 ⇒ đơn vị cuối làm lợi nhuận giảm ⇒ giảm sản lượng về mức MC = P." },
+            { id: "C5-TN09", q: "Tại sản lượng tối ưu Q=50, P=40 và ATC=32 nghìn đồng/sản phẩm. Lợi nhuận kinh tế của doanh nghiệp là bao nhiêu?", o: { A: "2.000 nghìn đồng", B: "1.600 nghìn đồng", C: "-400 nghìn đồng", D: "400 nghìn đồng" }, a: "D", e: "π = (P − ATC) × Q = (40 − 32) × 50 = 400 nghìn đồng." },
+            { id: "C5-TN10", q: "Tại Q*=100, P=MC=18, AVC=14 và ATC=22 nghìn đồng/sản phẩm. Quyết định nào tốt nhất trong ngắn hạn?", o: { A: "Đóng cửa vì P < ATC", B: "Sản xuất 100 sản phẩm và chấp nhận lỗ 400 nghìn đồng", C: "Sản xuất 100 sản phẩm và lãi 400 nghìn đồng", D: "Tăng giá bán lên 22 nghìn đồng" }, a: "B", e: "P = 18 > AVC = 14 nên vẫn sản xuất (bù được biến phí và một phần FC), nhưng P < ATC = 22 nên lỗ (18 − 22) × 100 = −400 nghìn đồng." }
+        ];
+
+        let currentIndex = 0;
+        let userAnswers = {};
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const questionCounter = document.getElementById('question-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const scrollArea = document.getElementById('question-scroll-area');
+        
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnSubmit = document.getElementById('btn-submit');
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            quizScreen.classList.add('flex');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const currentQ = rawData[currentIndex];
+            questionText.innerHTML = `<span class="font-bold text-indigo-600 mr-2">[${currentQ.id}]</span> ${currentQ.q}`;
+            questionCounter.innerText = `Câu ${currentIndex + 1}/${rawData.length}`;
+            progressBar.style.width = `${((currentIndex + 1) / rawData.length) * 100}%`;
+
+            optionsContainer.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(currentQ.o)) {
+                const isSelected = userAnswers[currentIndex] === key;
+                
+                const optionHTML = `
+                    <label class="flex items-start p-4 border rounded-xl cursor-pointer transition-all duration-200 ${isSelected ? 'bg-indigo-50 border-indigo-500' : 'border-gray-200 hover:bg-gray-50'}">
+                        <div class="flex items-center h-5">
+                            <input type="radio" name="question_${currentIndex}" value="${key}" ${isSelected ? 'checked' : ''} onchange="handleSelect('${key}')" class="mr-4">
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-gray-800"><strong class="text-gray-600 mr-1 w-6 inline-block">${key}.</strong> ${value}</span>
+                        </div>
+                    </label>
+                `;
+                optionsContainer.insertAdjacentHTML('beforeend', optionHTML);
+            }
+
+            btnPrev.disabled = currentIndex === 0;
+            
+            if (currentIndex === rawData.length - 1) {
+                btnNext.classList.add('hidden');
+                btnSubmit.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnSubmit.classList.add('hidden');
+            }
+            
+            // Scroll to top of question on transition
+            scrollArea.scrollTop = 0;
+        }
+
+        function handleSelect(selectedOption) {
+            userAnswers[currentIndex] = selectedOption;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < rawData.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            if(Object.keys(userAnswers).length < rawData.length) {
+                const unAnswered = rawData.length - Object.keys(userAnswers).length;
+                if(!confirm(`Bạn còn ${unAnswered} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài?`)) return;
+            }
+            
+            quizScreen.classList.add('hidden');
+            quizScreen.classList.remove('flex');
+            resultScreen.classList.remove('hidden');
+            resultScreen.classList.add('flex');
+            
+            calculateAndRenderResults();
+        }
+
+        function calculateAndRenderResults() {
+            let score = 0;
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+
+            rawData.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === q.a;
+                
+                if (isCorrect) score++;
+
+                const reviewItem = document.createElement('div');
+                reviewItem.className = `bg-white rounded-xl p-5 border shadow-sm ${isCorrect ? 'border-green-200' : 'border-red-200'}`;
+                
+                let userAnsText = userAnswer ? `<b>${userAnswer}.</b> ${q.o[userAnswer]}` : '<span class="text-gray-400 italic">Không trả lời</span>';
+                
+                const statusIcon = isCorrect 
+                    ? `<svg class="w-6 h-6 text-green-500 inline-block mr-2 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+                    : `<svg class="w-6 h-6 text-red-500 inline-block mr-2 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+
+                reviewItem.innerHTML = `
+                    <h4 class="font-medium text-gray-800 mb-3 text-lg leading-relaxed flex items-start">
+                        <span class="mt-1">${statusIcon}</span>
+                        <span><span class="text-indigo-600 font-bold mr-1">[${q.id}]</span> ${q.q}</span>
+                    </h4>
+                    <div class="space-y-3 text-sm md:text-base ml-8">
+                        <div class="flex items-start">
+                            <span class="w-32 shrink-0 text-gray-500">Lựa chọn của bạn:</span>
+                            <span class="${isCorrect ? 'text-green-700 font-medium' : 'text-red-600 font-medium'}">${userAnsText}</span>
+                        </div>
+                        ${!isCorrect ? `
+                        <div class="flex items-start">
+                            <span class="w-32 shrink-0 text-gray-500">Đáp án đúng:</span>
+                            <span class="text-green-700 font-medium"><b>${q.a}.</b> ${q.o[q.a]}</span>
+                        </div>
+                        ` : ''}
+                        <div class="mt-4 bg-indigo-50/50 text-indigo-900 p-4 rounded-lg text-sm border border-indigo-100 shadow-inner">
+                            <strong class="text-indigo-700 block mb-1">Giải thích chi tiết:</strong> ${q.e}
+                        </div>
+                    </div>
+                `;
+                reviewContainer.appendChild(reviewItem);
+            });
+
+            document.getElementById('score-display').innerText = `${score}/${rawData.length}`;
+            
+            let message = '';
+            const percentage = score / rawData.length;
+            if (percentage >= 0.9) message = 'Tuyệt vời! Bạn đã nắm cực vững kiến thức cả 5 chương. 🏆';
+            else if (percentage >= 0.7) message = 'Khá lắm! Bạn hiểu bài rất tốt, hãy giữ vững phong độ. 👏';
+            else if (percentage >= 0.5) message = 'Đạt yêu cầu! Nhưng bạn cần ôn tập kỹ hơn các chương bị sai. 📚';
+            else message = 'Bạn cần xem kỹ lại phần giải thích và ôn tập lý thuyết nhiều hơn! 💡';
+            
+            document.getElementById('score-message').innerText = message;
+        }
+    </script>
+</body>
+</html>
